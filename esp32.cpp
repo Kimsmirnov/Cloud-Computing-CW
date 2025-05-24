@@ -50,7 +50,6 @@ void setup() { // Initialize the DHT sensor, WiFi, and ThingSpeak
 }
 
 String getTalkBackCommand() { // Function to get the command from TalkBack
-  WiFiClient client;
   String url = "/talbacks/" + String(TALKBACK_ID) + "/commands/execute";
   String response = "";
 
