@@ -25,6 +25,8 @@ WiFiClient client;
 const char* wifi_name = "Wokwi-GUEST";
 const char* password = "";
 
+unsigned long lightOnTime = 0;
+bool lightPreviouslyOn = false;
 
 void setup() { // Initialize the DHT sensor, WiFi, and ThingSpeak
   Serial.begin(115200);
@@ -50,7 +52,7 @@ void setup() { // Initialize the DHT sensor, WiFi, and ThingSpeak
 }
 
 String getTalkBackCommand() { // Function to get the command from TalkBack
-  String url = "/talbacks/" + String(TALKBACK_ID) + "/commands/execute";
+  String url = "/talkbacks/" + String(TALKBACK_ID) + "/commands/execute";
   String response = "";
 
   if (client.connect("api.thingspeak.com", 80)) { // Connect to the TalkBack API
@@ -99,11 +101,18 @@ void loop() {
   temp = dht.readTemperature();
   pirState = digitalRead(PIRPIN);
 
-  if (pirState == HIGH) {
-    digitalWrite(RELAY_LIGHT, HIGH);
-    Serial.println("Motion Detected, Light ON");
-    delay(20000); // Keep light ON for 20 seconds
+   if (pirState == HIGH) {
+    if (!lightPreviouslyOn) {
+      digitalWrite(RELAY_LIGHT, HIGH);
+      Serial.println("Motion Detected, Light ON");
+      lightOnTime = millis();
+      lightPreviouslyOn = true;
+    }
+  }
+
+  if (lightPreviouslyOn && (millis() - lightOnTime >= 20000)) {
     digitalWrite(RELAY_LIGHT, LOW);
+    lightPreviouslyOn = false;
   }
 
   if (temp > 25) { // Check if temperature is above 25 degrees Celsius
@@ -137,11 +146,37 @@ void loop() {
   // Send data to ThingSpeak
   ThingSpeak.setField(1, temp);
   ThingSpeak.setField(2, pirState);
-  ThingSpeak.setField(3, digitalRead(RELAY_COOLER));
+  static unsigned long lastUpdateTime = 0;
+  unsigned long currentTime = millis();
+
+  if (currentTime - lastUpdateTime >= 2000) {
+    lastUpdateTime = currentTime;
+
+    // Send data to ThingSpeak
+    ThingSpeak.setField(1, temp);
+    ThingSpeak.setField(2, pirState);
+    ThingSpeak.setField(3, digitalRead(RELAY_COOLER));
+    ThingSpeak.setField(4, digitalRead(RELAY_HEATER));
+    ThingSpeak.setField(5, digitalRead(RELAY_LIGHT));
+  }
   ThingSpeak.setField(4, digitalRead(RELAY_HEATER));
   ThingSpeak.setField(5, digitalRead(RELAY_LIGHT));
   
   ThingSpeak.writeFields(CHANNEL_ID, THINGSPEAK_API_KEY);
   
-  delay(2000);
+  static unsigned long previousMillis = 0;
+  unsigned long currentMillis = millis();
+
+  if (currentMillis - previousMillis >= 2000) {
+    previousMillis = currentMillis;
+
+    // Perform periodic tasks here
+    ThingSpeak.setField(1, temp);
+    ThingSpeak.setField(2, pirState);
+    ThingSpeak.setField(3, digitalRead(RELAY_COOLER));
+    ThingSpeak.setField(4, digitalRead(RELAY_HEATER));
+    ThingSpeak.setField(5, digitalRead(RELAY_LIGHT));
+    
+    ThingSpeak.writeFields(CHANNEL_ID, THINGSPEAK_API_KEY);
+  }
 }
