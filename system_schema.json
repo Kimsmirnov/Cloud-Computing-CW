@@ -1,0 +1,122 @@
+{
+  "version": 1,
+  "author": "ким смирнов",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "board-esp32-devkit-c-v4", "id": "esp", "top": 172.8, "left": -110.36, "attrs": {} },
+    { "type": "wokwi-led", "id": "led1", "top": 294, "left": 339.8, "attrs": { "color": "red" } },
+    {
+      "type": "wokwi-resistor",
+      "id": "r1",
+      "top": 195.95,
+      "left": 230.4,
+      "attrs": { "value": "220" }
+    },
+    {
+      "type": "wokwi-dht22",
+      "id": "dht1",
+      "top": -86.1,
+      "left": -34.2,
+      "attrs": { "temperature": "56" }
+    },
+    { "type": "wokwi-pir-motion-sensor", "id": "pir1", "top": -63.2, "left": 79.02, "attrs": {} },
+    { "type": "wokwi-relay-module", "id": "relay1", "top": 173, "left": 57.6, "attrs": {} },
+    { "type": "wokwi-relay-module", "id": "relay2", "top": 249.8, "left": 57.6, "attrs": {} },
+    { "type": "wokwi-relay-module", "id": "relay3", "top": 326.6, "left": 57.6, "attrs": {} },
+    {
+      "type": "wokwi-resistor",
+      "id": "r2",
+      "top": 272.75,
+      "left": 230.4,
+      "attrs": { "value": "220" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r3",
+      "top": 349.55,
+      "left": 230.4,
+      "attrs": { "value": "220" }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "led2",
+      "top": 207.6,
+      "left": 339.8,
+      "attrs": { "color": "red" }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "led3",
+      "top": 130.8,
+      "left": 339.8,
+      "attrs": { "color": "red" }
+    }
+  ],
+  "connections": [
+    [ "esp:TX", "$serialMonitor:RX", "", [] ],
+    [ "esp:RX", "$serialMonitor:TX", "", [] ],
+    [ "dht1:VCC", "esp:3V3", "red", [ "v134.4", "h-115.2", "v38.4" ] ],
+    [ "dht1:SDA", "esp:5", "green", [ "v153.6", "h19.3", "v105.6" ] ],
+    [ "pir1:VCC", "esp:3V3", "red", [ "v86.4", "h-134.4", "v48", "h-115.2", "v38.4" ] ],
+    [ "pir1:GND", "esp:GND.2", "black", [ "v134.4", "h-134.66", "v38.4" ] ],
+    [ "pir1:OUT", "esp:14", "green", [ "v115.2", "h-278.54", "v67.2", "h38.4", "v96" ] ],
+    [
+      "relay1:VCC",
+      "esp:3V3",
+      "red",
+      [ "h-38.4", "v-76.8", "h-38.4", "v48", "h-115.2", "v38.4" ]
+    ],
+    [
+      "relay2:VCC",
+      "esp:3V3",
+      "red",
+      [ "h-38.4", "v-153.6", "h-38.4", "v48", "h-115.2", "v38.4" ]
+    ],
+    [
+      "relay3:VCC",
+      "esp:3V3",
+      "red",
+      [ "h-38.4", "v-230.4", "h-38.4", "v48", "h-115.2", "v38.4" ]
+    ],
+    [ "relay1:GND", "esp:GND.3", "black", [ "h-57.6", "v57.2" ] ],
+    [ "relay2:GND", "esp:GND.3", "black", [ "h-57.6", "v-19.6" ] ],
+    [ "relay3:GND", "esp:GND.3", "black", [ "h-48", "v-77.2", "h-9.6", "v-19.2" ] ],
+    [
+      "relay1:IN",
+      "esp:12",
+      "green",
+      [ "h-28.8", "v-67.4", "h-182.4", "v67.2", "h38.4", "v105.6" ]
+    ],
+    [
+      "relay2:IN",
+      "esp:13",
+      "green",
+      [ "h-28.8", "v-144.2", "h-182.4", "v67.2", "h38.4", "v124.8" ]
+    ],
+    [
+      "relay3:IN",
+      "esp:27",
+      "green",
+      [ "h-28.8", "v-86.6", "h0", "v-134.4", "h-182.4", "v67.2", "h38.4", "v86.4" ]
+    ],
+    [
+      "dht1:GND",
+      "esp:GND.1",
+      "black",
+      [ "v76.8", "h0", "v28.8", "h-172.8", "v86.4", "h38.4", "v105.6" ]
+    ],
+    [ "relay1:NO", "r1:1", "green", [ "h39.6", "v-11.4" ] ],
+    [ "relay2:NO", "r2:1", "green", [ "h30", "v-1.8" ] ],
+    [ "relay3:NO", "r3:1", "green", [ "h39.6", "v-1.8" ] ],
+    [ "r3:2", "led1:A", "green", [ "v0", "h75.6" ] ],
+    [ "r2:2", "led2:A", "green", [ "v0", "h75.6" ] ],
+    [ "r1:2", "led3:A", "green", [ "v0", "h75.6" ] ],
+    [ "led3:C", "esp:GND.3", "blue", [ "v0", "h-153.2", "v-19.2", "h-163.2", "v96" ] ],
+    [ "led2:C", "esp:GND.3", "blue", [ "v0", "h-153.2", "v-9.6", "h-163.2", "v19.2" ] ],
+    [ "led1:C", "esp:GND.3", "blue", [ "v0", "h-153.2", "v-19.2", "h-163.2", "v-57.6" ] ],
+    [ "relay1:COM", "esp:3V3", "red", [ "h30", "v-49.4", "h-345.6", "v48" ] ],
+    [ "relay2:COM", "esp:3V3", "red", [ "h30", "v-126.2", "h-345.6", "v48" ] ],
+    [ "relay3:COM", "esp:3V3", "red", [ "h30", "v-203", "h-345.6", "v48" ] ]
+  ],
+  "dependencies": {}
+}
